@@ -1,4 +1,3 @@
-from time import time
 from database.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, ForeignKey, Enum, Boolean, DateTime, func
@@ -27,4 +26,10 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     
-    ticket = relationship("Ticket", back_populates="user")
+    tickets_created = relationship("Ticket", back_populates="customer", foreign_keys="Ticket.customer_id")
+
+    tickets_assigned = relationship("Ticket", back_populates="assigned_agent", foreign_keys="Ticket.assigned_agent_id")
+
+    replies = relationship("TicketReplies", back_populates="user")
+
+    activities = relationship("TicketActivities", back_populates="actor")
