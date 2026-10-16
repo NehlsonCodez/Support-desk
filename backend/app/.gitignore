@@ -1,8 +1,15 @@
 # ==========================
-# Project-specific
+# Python
 # ==========================
+__pycache__/
+*.py[cod]
+*.pyo
 
-# Environment variables
+# Virtual environments
+venv/
+.venv/
+
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
@@ -10,32 +17,40 @@
 # VS Code
 .vscode/
 
+# ==========================
 # Alembic
-# Keep migration files under version control!
+# ==========================
+# Keep migration files under version control.
 # Ignore only Python cache files.
-alembic/__pycache__/
-alembic/versions/__pycache__/
+**/alembic/__pycache__/
+**/alembic/versions/__pycache__/
 
+# ==========================
 # PostgreSQL
+# ==========================
 *.sql
 
+# ==========================
 # Docker
+# ==========================
 .docker/
 docker-compose.override.yml
 
-# macOS
+# ==========================
+# Operating system
+# ==========================
 .DS_Store
-
-# Linux
 *~
 
-# Logs
+# ==========================
+# Logs and temporary files
+# ==========================
 logs/
 *.log
-
-# Temporary files
 *.tmp
 *.temp
 
-# Firebase
+# ==========================
+# Secrets
+# ==========================
 secrets/firebase-service-account.json
