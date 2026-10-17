@@ -8,6 +8,9 @@ class TicketCreate(BaseModel):
     
 
 class UpdateTicket(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    
     title: str | None = Field(default=None, min_length=10, max_length=150)
 
     description: str | None = Field(default=None, min_length=10)
