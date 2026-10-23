@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field
 from .enums import TicketStatus, TicketPriority
 
 class TicketCreate(BaseModel):
@@ -7,7 +7,7 @@ class TicketCreate(BaseModel):
     description: str
     
 
-class UpdateTicket(BaseModel):
+class TicketUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     
@@ -36,7 +36,7 @@ class TicketResponse(BaseModel):
     id: int
     title: str
     description: str
-    customer_id: str
+    customer_id: int
     status: str
 
     created_at: datetime

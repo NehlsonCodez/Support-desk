@@ -4,10 +4,10 @@ from datetime import datetime
 
 #TICKET REPLIES SCHEMAS
 class TicketReplyCreate(BaseModel):
-    message: str = Field(min_length=1, max_length=5000)
+    message: str = Field(min_length=1, max_length=255)
 
 class TicketReplyUpdate(BaseModel):
-    message: str | None = Field(min_length=1, max_length=5000)
+    message: str | None = Field(min_length=1, max_length=255)
 
 class TicketReplyResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
