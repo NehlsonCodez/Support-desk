@@ -21,7 +21,7 @@ async def create_user_service(db:AsyncSession, data:UserCreate):
     
 
 async def login_user_service(db:AsyncSession, data:UserLogin):
-    db_user = await get_user_by_email(data.email, db)
+    db_user = await get_user_by_email(data.username, db)
 
     if not (db_user and await verify_password(data.password, db_user.hashed_password)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid credentials")

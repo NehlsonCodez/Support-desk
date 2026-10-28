@@ -2,9 +2,22 @@ from fastapi import HTTPException, status
 from crud import create_ticket_activity, get_ticket_activity_by_id, get_ticket_activities
 from sqlalchemy.ext.asyncio import AsyncSession
 
-async def create_ticket_activity_service(db:AsyncSession, data:dict):
-
-    ticket_activity = await create_ticket_activity(db, data)
+async def create_ticket_activity_service(
+    db: AsyncSession,
+    ticket_id: int,
+    actor_id: int,
+    action: str,
+    old_value: str | None = None,
+    new_value: str | None = None,
+):
+    ticket_activity = await create_ticket_activity(
+        db=db,
+        ticket_id=ticket_id,
+        actor_id=actor_id,
+        action=action,
+        old_value=old_value,
+        new_value=new_value,
+    )
 
     return ticket_activity
 
