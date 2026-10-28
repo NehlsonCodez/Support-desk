@@ -11,9 +11,9 @@ class TicketUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     
-    title: str | None = Field(default=None, min_length=10, max_length=150)
+    title: str | None = Field(default=None, min_length=4, max_length=150)
 
-    description: str | None = Field(default=None, min_length=10)
+    description: str | None = Field(default=None, min_length=5)
 
 
 class TicketStatusUpdate(BaseModel):
@@ -42,6 +42,3 @@ class TicketResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
-
-
-
