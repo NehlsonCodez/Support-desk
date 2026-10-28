@@ -92,6 +92,27 @@ async def update_ticket_prioriy(ticket_id, db:AsyncSession, priority:TicketPrior
 
     return ticket
 
+async def assign_ticket(ticket_id:int, data, db:AsyncSession):
+    result = await db.execute(select(Ticket).where(Ticket.id==ticket_id))
+
+    ticket = result.scalar_one_or_none()
+
+    if ticket is None:
+        return None
+
+    assigned_agent_id = data.assigned_agent_id if hasattr(data, "assigned_agent_id") else data.get("assigned_agent_id")
+    ticket.assigned_agent_id = assigned_agent_id
+
+    try:
+        await db.commit()
+        await db.refresh(ticket)
+    except Exception:
+        await db.rollback()
+        raise
+
+    return ticket
+
+
 async def delete_ticket_by_id(ticket_id, db: AsyncSession):
     result = await db.execute(select(Ticket).where(Ticket.id==ticket_id))
 

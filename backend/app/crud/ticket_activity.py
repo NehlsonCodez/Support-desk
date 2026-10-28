@@ -3,8 +3,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models import TicketActivities
 
 
-async def create_ticket_activity(db:AsyncSession, data:dict):
-    ticket_activity = TicketActivities(**data)
+async def create_ticket_activity(
+    db: AsyncSession,
+    ticket_id: int,
+    actor_id: int,
+    action: str,
+    old_value: str | None = None,
+    new_value: str | None = None,
+):
+    ticket_activity = TicketActivities(
+        ticket_id=ticket_id,
+        actor_id=actor_id,
+        action=action,
+        old_value=old_value,
+        new_value=new_value,
+    )
 
     db.add(ticket_activity)
     

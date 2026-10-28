@@ -1,4 +1,4 @@
-from .tickets import (create_ticket, get_assigned_tickets, get_customer_tickets, get_tickets, 
+from .tickets import (create_ticket, get_assigned_tickets, get_customer_tickets, get_tickets, assign_ticket,
                     get_ticket_by_id, update_ticket_by_id, update_ticket_status, update_ticket_prioriy, delete_ticket_by_id)
 
 from .users import (get_users_by_role, get_users, get_user_by_id, get_user_by_email,
