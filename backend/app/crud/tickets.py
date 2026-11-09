@@ -1,14 +1,18 @@
-from models import Ticket
+from models import Ticket, TicketActivities, TicketReplies
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from schemas import TicketStatus, TicketPriority
 
 async def create_ticket(db:AsyncSession, customer_id: int, ticket_data: dict):
     new_ticket = Ticket(customer_id=customer_id, **ticket_data)
 
     db.add(new_ticket)
-    await db.commit()
-    await db.refresh(new_ticket)
+    try:
+        await db.commit()
+        await db.refresh(new_ticket)
+    except Exception:
+        await db.rollback()
+        raise
 
     return new_ticket
 
@@ -53,8 +57,12 @@ async def update_ticket_by_id(ticket_id, db, ticket_data:dict):
     for key, value in ticket_data.items():
         setattr(ticket, key, value)
 
-    await db.commit()
-    await db.refresh(ticket)
+    try:
+        await db.commit()
+        await db.refresh(ticket)
+    except Exception:
+        await db.rollback()
+        raise
 
     return ticket
 
@@ -68,12 +76,16 @@ async def update_ticket_status(ticket_id, db: AsyncSession, status:TicketStatus)
 
     ticket.status = status
 
-    await db.commit()
-    await db.refresh(ticket)
+    try:
+        await db.commit()
+        await db.refresh(ticket)
+    except Exception:
+        await db.rollback()
+        raise
 
     return ticket
     
-async def update_ticket_prioriy(ticket_id, db:AsyncSession, priority:TicketPriority):
+async def update_ticket_priority(ticket_id, db:AsyncSession, priority:TicketPriority):
     result=await db.execute(select(Ticket).where(Ticket.id==ticket_id))
 
     ticket = result.scalar_one_or_none()
@@ -91,6 +103,9 @@ async def update_ticket_prioriy(ticket_id, db:AsyncSession, priority:TicketPrior
         raise
 
     return ticket
+
+update_ticket_prioriy = update_ticket_priority
+
 
 async def assign_ticket(ticket_id:int, data, db:AsyncSession):
     result = await db.execute(select(Ticket).where(Ticket.id==ticket_id))
@@ -113,13 +128,16 @@ async def assign_ticket(ticket_id:int, data, db:AsyncSession):
     return ticket
 
 
-async def delete_ticket_by_id(ticket_id, db: AsyncSession):
-    result = await db.execute(select(Ticket).where(Ticket.id==ticket_id))
-
+async def delete_ticket_by_id(ticket_id: int, db: AsyncSession):
+    result = await db.execute(select(Ticket).where(Ticket.id == ticket_id))
     ticket = result.scalar_one_or_none()
 
     if ticket is None:
         return False
+
+    # Explicitly clean up child activities and replies to prevent FK violation
+    await db.execute(delete(TicketActivities).where(TicketActivities.ticket_id == ticket_id))
+    await db.execute(delete(TicketReplies).where(TicketReplies.ticket_id == ticket_id))
 
     await db.delete(ticket)
     
@@ -130,3 +148,4 @@ async def delete_ticket_by_id(ticket_id, db: AsyncSession):
         raise
 
     return True
+

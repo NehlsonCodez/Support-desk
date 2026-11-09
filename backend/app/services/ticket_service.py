@@ -7,12 +7,24 @@ from crud import (
     get_tickets,
     update_ticket_by_id,
     update_ticket_status,
-    update_ticket_prioriy,
+    update_ticket_priority,
     assign_ticket,
     create_ticket_activity,
+    delete_ticket_by_id,
+    get_user_by_id,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas import TicketCreate, TicketStatusUpdate, TicketPriorityUpdate, TicketUpdate, TicketAssignment, TicketStatus, TicketPriority
+from schemas import (
+    TicketCreate,
+    TicketStatusUpdate,
+    TicketPriorityUpdate,
+    TicketUpdate,
+    TicketAssignment,
+    TicketStatus,
+    TicketPriority,
+    UserRole,
+)
+
 
 
 async def create_ticket_service(db:AsyncSession, customer_id:int, data:TicketCreate):
@@ -110,7 +122,7 @@ async def update_ticket_priority_service(ticket_id:int, db:AsyncSession, data:Ti
     new_priority = data.priority if hasattr(data, "priority") else data
     old_priority = ticket.priority
 
-    updated_priority = await update_ticket_prioriy(ticket_id, db, new_priority)
+    updated_priority = await update_ticket_priority(ticket_id, db, new_priority)
 
     old_val = old_priority.value if hasattr(old_priority, "value") else str(old_priority)
     new_val = new_priority.value if hasattr(new_priority, "value") else str(new_priority)
@@ -132,9 +144,16 @@ async def assign_ticket_service(ticket_id:int, data:TicketAssignment, db:AsyncSe
     if ticket is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ticket not found")
 
-    old_agent_id = ticket.assigned_agent_id
     new_agent_id = data.assigned_agent_id if hasattr(data, "assigned_agent_id") else (data.get("assigned_agent_id") if isinstance(data, dict) else None)
+    
+    agent = await get_user_by_id(new_agent_id, db)
+    if not agent or agent.role not in (UserRole.AGENT, UserRole.ADMIN):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Assigned user must exist and have agent or admin role",
+        )
 
+    old_agent_id = ticket.assigned_agent_id
     assigned_ticket = await assign_ticket(ticket_id, data, db)
 
     await create_ticket_activity(
@@ -147,3 +166,12 @@ async def assign_ticket_service(ticket_id:int, data:TicketAssignment, db:AsyncSe
     )
 
     return assigned_ticket
+
+async def delete_ticket_service(ticket_id:int, db:AsyncSession, actor_id:int):
+    ticket = await get_ticket_by_id(ticket_id, db)
+
+    if ticket is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ticket not found")
+
+    deleted = await delete_ticket_by_id(ticket_id, db)
+    return deleted
