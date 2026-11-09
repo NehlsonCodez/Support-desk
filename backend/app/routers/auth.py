@@ -7,15 +7,19 @@ from schemas import UserResponse, UserCreate, UserLogin
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(data:UserCreate, db:AsyncSession=Depends(get_db)):
     return await create_user_service(db, data)
 
 @router.post("/login")
 async def login(form_data:OAuth2PasswordRequestForm=Depends(), db:AsyncSession=Depends(get_db)):
-
     token = await login_user_service(db, form_data)
-
     return {"access_token":token, "token_type":"bearer"}
+
+@router.post("/login-json")
+async def login_json(data:UserLogin, db:AsyncSession=Depends(get_db)):
+    token = await login_user_service(db, data)
+    return {"access_token":token, "token_type":"bearer"}
+
 
     
