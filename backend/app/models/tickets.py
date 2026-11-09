@@ -31,9 +31,19 @@ class Ticket(Base):
 
     assigned_agent = relationship("User", back_populates="tickets_assigned", foreign_keys=[assigned_agent_id])
 
-    replies = relationship("TicketReplies", back_populates="ticket")
+    replies = relationship(
+        "TicketReplies",
+        back_populates="ticket",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
-    activities = relationship("TicketActivities", back_populates="ticket")
+    activities = relationship(
+        "TicketActivities",
+        back_populates="ticket",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class TicketReplies(Base):
@@ -41,7 +51,7 @@ class TicketReplies(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    ticket_id: Mapped[int] = mapped_column(ForeignKey("tickets.id"), index=True)
+    ticket_id: Mapped[int] = mapped_column(ForeignKey("tickets.id", ondelete="CASCADE"), index=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
 
@@ -64,7 +74,8 @@ class TicketActivities(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    ticket_id: Mapped[int] = mapped_column(ForeignKey("tickets.id"), index=True)
+    ticket_id: Mapped[int] = mapped_column(ForeignKey("tickets.id", ondelete="CASCADE"), index=True)
+
 
     actor_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
 

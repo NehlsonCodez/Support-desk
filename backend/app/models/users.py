@@ -26,10 +26,26 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     
-    tickets_created = relationship("Ticket", back_populates="customer", foreign_keys="Ticket.customer_id")
+    tickets_created = relationship(
+        "Ticket",
+        back_populates="customer",
+        foreign_keys="Ticket.customer_id",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
     tickets_assigned = relationship("Ticket", back_populates="assigned_agent", foreign_keys="Ticket.assigned_agent_id")
 
-    replies = relationship("TicketReplies", back_populates="user")
+    replies = relationship(
+        "TicketReplies",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
-    activities = relationship("TicketActivities", back_populates="actor")
+    activities = relationship(
+        "TicketActivities",
+        back_populates="actor",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
