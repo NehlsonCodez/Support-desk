@@ -35,8 +35,7 @@ class Ticket(Base):
         "TicketReplies",
         back_populates="ticket",
         cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
+        passive_deletes=True,)
 
     activities = relationship(
         "TicketActivities",
