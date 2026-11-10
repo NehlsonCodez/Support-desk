@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
-from routers import auth_router, ticket_router, ticket_activity_router, ticket_reply_router
+from routers import auth_router, ticket_router, ticket_activity_router, ticket_reply_router, user_router
 
 app = FastAPI()
 
 
 app.include_router(auth_router)
+app.include_router(user_router)
 app.include_router(ticket_router)
 app.include_router(ticket_reply_router)
 app.include_router(ticket_activity_router)
