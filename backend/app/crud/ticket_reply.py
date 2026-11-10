@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import TicketReplies
 
-async def create_ticket_reply(ticket_id:int, db:AsyncSession, data:dict):
-    ticket_reply = TicketReplies(**data, ticket_id=ticket_id)
+async def create_ticket_reply(ticket_id:int, user_id:int, db:AsyncSession, data:dict):
+    ticket_reply = TicketReplies(**data, ticket_id=ticket_id, user_id=user_id)
 
     db.add(ticket_reply)
 
@@ -54,3 +54,19 @@ async def update_ticket_reply(reply_id:int, db:AsyncSession, data:dict):
 
     return ticket_reply
 
+
+async def delete_ticket_reply(reply_id:int, db:AsyncSession):
+    result = await db.execute(select(TicketReplies).where(TicketReplies.id == reply_id))
+    ticket_reply = result.scalar_one_or_none()
+
+    if ticket_reply is None:
+        return False
+
+    await db.delete(ticket_reply)
+    try:
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        raise
+
+    return True

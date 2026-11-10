@@ -20,4 +20,10 @@ from .user_service import (
     update_user_service,
 )
 from .ticket_activity_service import create_ticket_activity_service, get_ticket_activities_service, get_ticket_activity_service
-from .ticket_reply_service import create_ticket_reply_service, get_ticket_replies_services, get_ticket_reply_service, update_ticket_reply_service
+from .ticket_reply_service import (
+    create_ticket_reply_service,
+    get_ticket_replies_services,
+    get_ticket_reply_service,
+    update_ticket_reply_service,
+    delete_ticket_reply_service,
+)
