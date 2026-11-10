@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from crud import create_ticket_activity, get_ticket_activity_by_id, get_ticket_activities
+from crud import create_ticket_activity, get_ticket_activity_by_id, get_ticket_activities, get_ticket_by_id
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def create_ticket_activity_service(
@@ -22,6 +22,9 @@ async def create_ticket_activity_service(
     return ticket_activity
 
 async def get_ticket_activities_service(ticket_id:int, db:AsyncSession, skip:int=0, limit:int=50):
+    ticket = await get_ticket_by_id(ticket_id, db)
+    if ticket is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
 
     ticket_activities = await get_ticket_activities(ticket_id, db, skip, limit)
 
@@ -31,6 +34,7 @@ async def get_ticket_activity_service(activity_id:int, db:AsyncSession):
     ticket_activity = await get_ticket_activity_by_id(activity_id, db)
 
     if ticket_activity is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ticket activity not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket activity not found")
 
     return ticket_activity
+
