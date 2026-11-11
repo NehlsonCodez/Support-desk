@@ -1,5 +1,7 @@
 # Support Desk API
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A role-based Support Desk and Ticketing REST API built with **FastAPI**, **SQLAlchemy (async)** and **PostgreSQL**. Customers raise support tickets, agents work on them, and admins manage users, priorities, and ticket assignments — with JWT authentication and per-role data isolation throughout.
 
 ## Features
@@ -214,3 +216,8 @@ curl -X POST http://127.0.0.1:8000/ticket/create-ticket \
 # 4. View your tickets
 curl http://127.0.0.1:8000/ticket/get-tickets -H "Authorization: Bearer <token>"
 ```
+
+## License
+
+This project is open source and licensed under the [MIT License](LICENSE) — you're free to use, modify, and distribute it, including commercially, as long as you include the original copyright notice.
+
